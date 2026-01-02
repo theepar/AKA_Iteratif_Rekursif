@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Analisis Konversi Biner | Tubes AKA</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Add Prism.js for syntax highlighting -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+            rel="stylesheet" />
+    </head>
+
+    <body>
+        <nav class="navbar">
+            <div class="logo">Tubes AKA</div>
+            <div class="nav-links">
+                <a href="#demo">Demo</a>
+                <a href="#benchmark">Benchmark</a>
+                <a href="#code">Source Code</a>
+            </div>
+        </nav>
+
+        <main>
+            <section id="hero" class="hero-section">
+                <div class="hero-content">
+                    <h1>Analisis Algoritma <span class="gradient-text">Desimal ke Biner</span></h1>
+                    <p>Perbandingan performa antara pendekatan <strong>Iteratif</strong> dan <strong>Rekursif</strong>
+                        dalam konversi bilangan.</p>
+                    <div class="hero-buttons">
+                        <a href="#demo" class="btn btn-primary">Coba Demo</a>
+                        <a href="#benchmark" class="btn btn-secondary">Lihat Data</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="binary-stream">10101011001</div>
+                    <div class="binary-stream">01110101010</div>
+                    <div class="binary-stream">11001011100</div>
+                </div>
+            </section>
+
+            <section id="demo" class="container">
+                <h2 class="section-title">Interactive Demo</h2>
+                <div class="demo-card">
+                    <div class="input-group">
+                        <label for="numberInput">Masukkan Bilangan Desimal (N)</label>
+                        <input type="number" id="numberInput" placeholder="Contoh: 100" min="0">
+                    </div>
+
+                    <div class="algorithm-grid">
+                        <div class="algo-card">
+                            <h3>Iteratif</h3>
+                            <p class="complexity">O(log N)</p>
+                            <button onclick="runIterative()" class="btn btn-small">Jalankan</button>
+                            <div class="result-box" id="iterativeResult">
+                                <span class="placeholder">Hasil akan muncul di sini...</span>
+                            </div>
+                            <div class="time-stat" id="iterativeTime">Waktu: - ms</div>
+                        </div>
+
+                        <div class="algo-card">
+                            <h3>Rekursif</h3>
+                            <p class="complexity">O(log N)</p>
+                            <button onclick="runRecursive()" class="btn btn-small">Jalankan</button>
+                            <div class="result-box" id="recursiveResult">
+                                <span class="placeholder">Hasil akan muncul di sini...</span>
+                            </div>
+                            <div class="time-stat" id="recursiveTime">Waktu: - ms</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="benchmark" class="container">
+                <h2 class="section-title">Benchmark Performance</h2>
+                <p class="section-desc">Pengujian batch pada dataset: [10, 50, 100, 500, 1000, 5000, 10000]</p>
+
+                <button onclick="runBenchmark()" class="btn btn-accent btn-wide">Mulai Benchmark Full </button>
+
+                <div class="benchmark-layout">
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                    <div class="table-container">
+                        <table id="benchmarkTable">
+                            <thead>
+                                <tr>
+                                    <th>Input (N)</th>
+                                    <th>Iteratif (ms)</th>
+                                    <th>Rekursif (ms)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="code" class="container">
+                <h2 class="section-title">Implementasi Code</h2>
+                <div class="code-tabs">
+                    <button class="tab-btn active" onclick="switchTab('java')">Java (Original)</button>
+                    <button class="tab-btn" onclick="switchTab('js')">JavaScript (Web)</button>
+                </div>
+
+                <div id="java-code" class="code-view active">
+                    <pre><code class="language-java">
+// Algoritma Iteratif
+public static String caraIteratif(int n) {
+    if (n == 0) return "0";
+    String biner = "";
+    while (n > 0) {
+        biner = (n % 2) + biner; 
+        n = n / 2;
+    }
+    return biner;
+}
+
+// Algoritma Rekursif
+public static String caraRekursif(int n) {
+    if (n == 0) return "";
+    return caraRekursif(n / 2) + (n % 2);
+}
+                </code></pre>
+                </div>
+
+                <div id="js-code" class="code-view">
+                    <pre><code class="language-javascript">
+// Algoritma Iteratif (JS)
+function caraIteratif(n) {
+    if (n === 0) return "0";
+    let biner = "";
+    while (n > 0) {
+        biner = (n % 2) + biner;
+        n = Math.floor(n / 2);
+    }
+    return biner;
+}
+
+// Algoritma Rekursif (JS)
+function caraRekursif(n) {
+    if (n === 0) return "";
+    return caraRekursif(Math.floor(n / 2)) + (n % 2);
+}
+                </code></pre>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Dibuat untuk Tugas Besar Analisis Kompleksitas Algoritma</p>
+        </footer>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+
+</html>
