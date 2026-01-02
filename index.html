@@ -60,7 +60,7 @@
             .btn-secondary {
                 @apply bg-transparent border border-slate-700 text-white px-6 py-3 rounded-lg font-semibold hover:border-accentCyan hover:text-accentCyan transition-all duration-300;
             }
-            /* Custom Scrollbar for Logs */
+
             .custom-scroll::-webkit-scrollbar {
                 width: 8px;
             }
@@ -84,14 +84,12 @@
             <div class="container mx-auto px-6 py-4 flex justify-between items-center relative z-50">
                 <div class="text-2xl font-bold gradient-text tracking-tight">Tubes AKA</div>
 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
                     <a href="#demo" class="hover:text-white transition-colors">Demo</a>
                     <a href="#logic" class="hover:text-white transition-colors">Logika</a>
                     <a href="#benchmark" class="hover:text-white transition-colors">Benchmark</a>
                 </div>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobileMenuBtn" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -100,7 +98,6 @@
                 </button>
             </div>
 
-            <!-- Mobile Menu Overlay -->
             <div id="mobileMenu"
                 class="hidden absolute top-full left-0 w-full bg-bgDark/95 backdrop-blur-xl border-b border-slate-800 p-6 md:hidden flex flex-col space-y-4 shadow-2xl transition-all duration-300">
                 <a href="#demo" class="block text-gray-300 hover:text-white text-lg font-medium mobile-link">Demo</a>
@@ -192,6 +189,9 @@
                                     class="bg-accentBlue/10 text-accentBlue text-xs px-2 py-1 rounded border border-accentBlue/20 font-mono">O(log
                                     n)</span>
                             </div>
+                            <div id="iterativeCase"
+                                class="hidden mb-4 px-3 py-1.5 rounded-lg text-xs font-bold border font-mono inline-block">
+                            </div>
 
                             <button onclick="runIterative()"
                                 class="w-full py-2 bg-slate-800 hover:bg-accentBlue hover:text-bgDark text-slate-300 rounded-lg border border-slate-700 transition-all font-medium text-sm mb-4">
@@ -214,7 +214,7 @@
 
                             <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
                                 <span class="text-xs text-slate-500">Execution Time</span>
-                                <span id="iterativeTime" class="text-sm font-mono text-emerald-400">- ms</span>
+                                <span id="iterativeTime" class="text-sm font-mono text-emerald-400">- ns</span>
                             </div>
                         </div>
 
@@ -228,6 +228,9 @@
                                 <span
                                     class="bg-accentPurple/10 text-accentPurple text-xs px-2 py-1 rounded border border-accentPurple/20 font-mono">O(log
                                     n)</span>
+                            </div>
+                            <div id="recursiveCase"
+                                class="hidden mb-4 px-3 py-1.5 rounded-lg text-xs font-bold border font-mono inline-block">
                             </div>
 
                             <button onclick="runRecursive()"
@@ -251,9 +254,14 @@
 
                             <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
                                 <span class="text-xs text-slate-500">Execution Time</span>
-                                <span id="recursiveTime" class="text-sm font-mono text-emerald-400">- ms</span>
+                                <span id="recursiveTime" class="text-sm font-mono text-emerald-400">- ns</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div id="demoComparison"
+                        class="hidden mt-8 text-center bg-slate-800/50 p-4 rounded-xl border border-dashed border-slate-600">
+                        <p class="text-slate-300 text-sm">Menunggu hasil kedua algoritma...</p>
                     </div>
                 </div>
             </div>
@@ -270,6 +278,17 @@
                 </button>
             </div>
 
+            <div id="benchmarkSummary"
+                class="hidden mb-8 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 p-6 rounded-xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-white mb-2">Analisis Performa</h4>
+                        <p id="benchmarkText" class="text-slate-300"></p>
+                    </div>
+                    <div class="text-4xl font-mono text-white/10 font-bold">VS</div>
+                </div>
+            </div>
+
             <div class="grid lg:grid-cols-2 gap-8">
                 <div class="bg-bgCard border border-slate-800 rounded-xl p-6 shadow-xl">
                     <canvas id="performanceChart"></canvas>
@@ -281,8 +300,8 @@
                             <thead>
                                 <tr class="text-slate-400 text-sm border-b border-slate-700">
                                     <th class="p-3 font-medium">Input (N)</th>
-                                    <th class="p-3 font-medium">Iteratif (ms)</th>
-                                    <th class="p-3 font-medium">Rekursif (ms)</th>
+                                    <th class="p-3 font-medium">Iteratif (ns)</th>
+                                    <th class="p-3 font-medium">Rekursif (ns)</th>
                                 </tr>
                             </thead>
                             <tbody class="font-mono text-sm text-slate-300">

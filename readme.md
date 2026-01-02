@@ -2,47 +2,46 @@
 
 Proyek ini dibuat untuk memenuhi Tugas Besar (Tubes) mata kuliah **Analisis Kompleksitas Algoritma (AKA)**. Proyek ini membandingkan performa (waktu eksekusi) antara dua pendekatan algoritma konversi bilangan Desimal ke Biner: **Iteratif** dan **Rekursif**.
 
-Saat ini tersedia dalam dua implementasi:
-1.  **Aplikasi Web (Visualisasi & Benchmark)**
+Dibuat menggunakan **HTML, Tailwind CSS, dan Vanilla JavaScript**, dengan fokus pada akurasi pengukuran waktu hingga satuan **Nanoseconds (ns)**.
 
 ## Fitur Utama
 
-### Web Application
-- **Visualisasi Modern**: Antarmuka pengguna (UI) bertema gelap dengan interaksi yang mulus dan **Responsif** (Mobile Support).
-- **Demo Interaktif**: Masukkan angka berapapun untuk melihat hasil konversi. Waktu eksekusi dinormalisasi (Total 1000x run) untuk akurasi lebih baik.
-- **Grafik Benchmark**: Memvisualisasikan perbandingan kompleksitas waktu (Iteratif vs Rekursif) menggunakan *Chart.js*.
-
+- **Floating Point Support**: Mendukung konversi bilangan pecahan (misal: `10.625`) dengan presisi tinggi (hingga 64-bit precision).
+- **Nanosecond Precision**: Pengukuran waktu eksekusi menggunakan `performance.now()` dengan akurasi tinggi dan ditampilkan dalam satuan **Nanoseconds (ns)**.
+- **Stable Benchmarking**: Menggunakan strategi **"Batch & Minimum"** (5x runs, ambil nilai minimum) untuk mengeliminasi gangguan *system noise* dan *garbage collector*, menghasilkan grafik yang stabil dan akurat.
+- **Visualisasi Algoritma**: Tampilan langkah-demi-langkah (Step-by-Step) untuk memahami cara kerja Divide (Integer) dan Multiply (Fraction).
+- **Responsif UI**: Antarmuka modern yang mendukung tampilan Desktop dan Mobile.
 
 ## Struktur Project
 
 ```text
 /
-├── index.html      # Halaman utama Web App
-├── script.js       # Logika Web App & Charting
+├── index.html      # Tampilan Web App (UI)
+├── script.js       # Core Algoritma (Iteratif/Rekursif) & Logic Benchmark
 └── readme.md       # Dokumentasi Project
 ```
 
 ## Analisis Algoritma
 
 ### 1. Cara Iteratif
-Menggunakan loop `while` untuk membagi bilangan secara berulang hingga mencapai 0.
+Menggunakan loop `while` untuk membagi bilangan bulat dan mengalikan bilangan pecahan secara berulang.
 
 - **Best Case**: $O(1)$ — Jika input $N = 0$, loop tidak dijalankan.
-- **Worst Case**: $O(\log n)$ — Harus membagi $N$ sampai habis. Jumlah operasi sebanding dengan jumlah bit ($\approx \log_2 N$).
-- **Average Case**: $O(\log n)$ — Secara rata-rata, setiap bilangan bulat positif $N$ memiliki panjang bit $\log_2 N$.
+- **Worst Case**: $O(\log n)$ — Jumlah operasi sebanding dengan jumlah bit representasi biner ($\approx \log_2 N$).
+- **Space Complexity**: $O(1)$ — Hanya menggunakan variabel sementara, sangat hemat memori.
 
 ### 2. Cara Rekursif
-Menggunakan fungsi yang memanggil dirinya sendiri (Divide and Conquer).
+Menggunakan fungsi yang memanggil dirinya sendiri (*self-calling function*) untuk memecah masalah menjadi sub-masalah.
 
 - **Best Case**: $O(1)$ — Jika input $N = 0$, langsung return (Base Case).
-- **Worst Case**: $O(\log n)$ — Kedalaman stack (recursion depth) mencapai $\log_2 N$.
-- **Average Case**: $O(\log n)$ — Sama seperti iteratif, jumlah pemanggilan fungsi sebanding dengan jumlah bit.
+- **Worst Case**: $O(\log n)$ — Kedalaman pemanggilan fungsi (*recursion depth*) mencapai $\log_2 N$.
+- **Space Complexity**: $O(\log n)$ — Membutuhkan memori tambahan di *Call Stack* untuk setiap panggilan rekursif.
 
-> **Kesimpulan**: Kedua algoritma memiliki efisiensi waktu yang setara secara asimtotik, namun Iteratif lebih hemat memori ($O(1)$ Space) dibandingkan Rekursif ($O(\log n)$ Stack Space).
+> **Kesimpulan**: Kedua algoritma memiliki kompleksitas waktu yang setara ($O(\log n)$), namun **Iteratif lebih unggul** dalam penggunaan memori dan stabilitas karena tidak membebani *Call Stack*.
 
 ## Cara Menjalankan
 
-### Opsi 1: Aplikasi Web (Rekomendasi)
 Cukup buka file `index.html` menggunakan browser modern (Chrome, Edge, Firefox).
 1.  Double-klik `index.html`.
-2.  Tampilan interaktif akan langsung muncul.
+2.  **Interactive Demo**: Masukkan angka desimal (bisa koma) untuk melihat hasil dan perbandingan waktu instan.
+3.  **Benchmark**: Scroll ke bawah dan klik "Mulai Benchmark" untuk melihat grafik perbandingan performa pada berbagai ukuran input ($N=0$ s.d. $10.000$).
