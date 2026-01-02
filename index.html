@@ -1,166 +1,346 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Analisis Konversi Biner | Tubes AKA</title>
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link
-            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
             rel="stylesheet">
-        <link rel="stylesheet" href="style.css">
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <!-- Add Prism.js for syntax highlighting -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
-            rel="stylesheet" />
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Outfit', 'sans-serif'],
+                            mono: ['JetBrains Mono', 'monospace'],
+                        },
+                        colors: {
+                            bgDark: '#0f111a',
+                            bgCard: '#1a1d2d',
+                            accentCyan: '#00f2fe',
+                            accentBlue: '#4facfe',
+                            accentPurple: '#7b2ff7',
+                        },
+                        animation: {
+                            'float': 'float 6s ease-in-out infinite',
+                            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        },
+                        keyframes: {
+                            float: {
+                                '0%, 100%': { transform: 'translateY(0)' },
+                                '50%': { transform: 'translateY(-20px)' },
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <style type="text/tailwindcss">
+            @layer utilities {
+            .glass {
+                @apply bg-bgDark/80 backdrop-blur-md border-b border-slate-800;
+            }
+            .gradient-text {
+                @apply bg-clip-text text-transparent bg-gradient-to-r from-accentCyan to-accentPurple;
+            }
+            .btn-primary {
+                @apply bg-gradient-to-r from-accentBlue to-accentPurple text-white px-6 py-3 rounded-lg font-semibold shadow-lg shadow-accentPurple/30 hover:shadow-accentPurple/50 hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-transparent border border-slate-700 text-white px-6 py-3 rounded-lg font-semibold hover:border-accentCyan hover:text-accentCyan transition-all duration-300;
+            }
+            /* Custom Scrollbar for Logs */
+            .custom-scroll::-webkit-scrollbar {
+                width: 8px;
+            }
+            .custom-scroll::-webkit-scrollbar-track {
+                background: #0f111a; 
+            }
+            .custom-scroll::-webkit-scrollbar-thumb {
+                background: #2d3246; 
+                border-radius: 4px;
+            }
+            .custom-scroll::-webkit-scrollbar-thumb:hover {
+                background: #4facfe; 
+            }
+        }
+    </style>
     </head>
 
-    <body>
-        <nav class="navbar">
-            <div class="logo">Tubes AKA</div>
-            <div class="nav-links">
-                <a href="#demo">Demo</a>
-                <a href="#benchmark">Benchmark</a>
-                <a href="#code">Source Code</a>
+    <body class="bg-bgDark text-white antialiased overflow-x-hidden selection:bg-accentPurple selection:text-white">
+
+        <nav class="glass fixed w-full top-0 z-50 transition-all duration-300">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center relative z-50">
+                <div class="text-2xl font-bold gradient-text tracking-tight">Tubes AKA</div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+                    <a href="#demo" class="hover:text-accentCyan transition-colors">Demo</a>
+                    <a href="#logic" class="hover:text-accentCyan transition-colors">Logika</a>
+                    <a href="#benchmark" class="hover:text-accentCyan transition-colors">Benchmark</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Overlay -->
+            <div id="mobileMenu"
+                class="hidden absolute top-full left-0 w-full bg-bgDark/95 backdrop-blur-xl border-b border-slate-800 p-6 md:hidden flex flex-col space-y-4 shadow-2xl transition-all duration-300">
+                <a href="#demo"
+                    class="block text-slate-400 hover:text-accentCyan text-lg font-medium mobile-link">Demo</a>
+                <a href="#logic"
+                    class="block text-slate-400 hover:text-accentCyan text-lg font-medium mobile-link">Logika</a>
+                <a href="#benchmark"
+                    class="block text-slate-400 hover:text-accentCyan text-lg font-medium mobile-link">Benchmark</a>
             </div>
         </nav>
 
-        <main>
-            <section id="hero" class="hero-section">
-                <div class="hero-content">
-                    <h1>Analisis Algoritma <span class="gradient-text">Desimal ke Biner</span></h1>
-                    <p>Perbandingan performa antara pendekatan <strong>Iteratif</strong> dan <strong>Rekursif</strong>
-                        dalam konversi bilangan.</p>
-                    <div class="hero-buttons">
-                        <a href="#demo" class="btn btn-primary">Coba Demo</a>
-                        <a href="#benchmark" class="btn btn-secondary">Lihat Data</a>
+        <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+            <div
+                class="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] bg-accentPurple/20 rounded-full blur-[120px] pointer-events-none">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] bg-accentBlue/10 rounded-full blur-[100px] pointer-events-none">
+            </div>
+
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+                <div class="space-y-6">
+                    <div
+                        class="inline-flex items-center space-x-2 bg-slate-800/50 border border-slate-700 rounded-full px-4 py-1.5 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accentCyan animate-pulse"></span>
+                        <span class="text-xs text-slate-300 font-mono">Algorithm Analysis v1.0</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                        Desimal ke <br>
+                        <span class="gradient-text">Biner Converter</span>
+                    </h1>
+                    <p class="text-lg text-slate-400 max-w-xl leading-relaxed">
+                        Visualisasi interaktif dan analisis performa algoritma
+                        <strong class="text-white">Iteratif</strong> vs <strong class="text-white">Rekursif</strong>.
+                        Pahami bagaimana komputer memproses angka di balik layar.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#demo" class="btn-primary">Mulai Demo</a>
+                        <a href="#benchmark" class="btn-secondary">Lihat Data</a>
                     </div>
                 </div>
-                <div class="hero-visual">
-                    <div class="binary-stream">10101011001</div>
-                    <div class="binary-stream">01110101010</div>
-                    <div class="binary-stream">11001011100</div>
-                </div>
-            </section>
 
-            <section id="demo" class="container">
-                <h2 class="section-title">Interactive Demo</h2>
-                <div class="demo-card">
-                    <div class="input-group">
-                        <label for="numberInput">Masukkan Bilangan Desimal (N)</label>
-                        <input type="number" id="numberInput" placeholder="Contoh: 100" min="0">
+                <div class="relative hidden md:block">
+                    <div class="absolute inset-0 bg-gradient-to-t from-bgDark to-transparent z-20"></div>
+                    <div class="font-mono text-accentCyan/20 text-6xl leading-none select-none animate-float">
+                        10101011<br>00110101<br>11100010<br>10111100
                     </div>
+                </div>
+            </div>
+        </section>
 
-                    <div class="algorithm-grid">
-                        <div class="algo-card">
-                            <h3>Iteratif</h3>
-                            <p class="complexity">O(log N)</p>
-                            <button onclick="runIterative()" class="btn btn-small">Jalankan</button>
-                            <div class="result-box" id="iterativeResult">
-                                <span class="placeholder">Hasil akan muncul di sini...</span>
-                            </div>
-                            <div class="time-stat" id="iterativeTime">Waktu: - ms</div>
+        <section id="demo" class="py-24 relative">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Interactive Demo</h2>
+                    <p class="text-slate-400">Bandingkan eksekusi langkah demi langkah.</p>
+                </div>
+
+                <div class="max-w-5xl mx-auto bg-bgCard border border-slate-800 rounded-2xl p-8 shadow-2xl">
+
+                    <div class="flex flex-col md:flex-row gap-6 items-end mb-12">
+                        <div class="w-full md:w-1/2 space-y-2">
+                            <label for="numberInput" class="text-sm text-slate-400">Masukkan Bilangan Desimal
+                                (N)</label>
+                            <input type="number" id="numberInput" placeholder="Contoh: 42"
+                                class="w-full bg-bgDark border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-accentCyan focus:ring-1 focus:ring-accentCyan outline-none transition-all placeholder-slate-600 font-mono text-lg">
                         </div>
 
-                        <div class="algo-card">
-                            <h3>Rekursif</h3>
-                            <p class="complexity">O(log N)</p>
-                            <button onclick="runRecursive()" class="btn btn-small">Jalankan</button>
-                            <div class="result-box" id="recursiveResult">
-                                <span class="placeholder">Hasil akan muncul di sini...</span>
+                        <div class="flex items-center space-x-3 pb-3">
+                            <label class="relative inline-flex items-center cursor-pointer group">
+                                <input type="checkbox" id="visualMode" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-accentPurple rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accentPurple">
+                                </div>
+                                <span
+                                    class="ml-3 text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Mode
+                                    Visualisasi (Slow)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+
+                        <div
+                            class="bg-slate-900/50 border border-slate-800 rounded-xl p-6 flex flex-col h-full hover:border-slate-600 transition-colors">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-accentBlue mb-1">Iteratif</h3>
+                                    <p class="text-xs text-slate-500 font-mono">Looping (While)</p>
+                                </div>
+                                <span
+                                    class="bg-accentBlue/10 text-accentBlue text-xs px-2 py-1 rounded border border-accentBlue/20 font-mono">O(log
+                                    n)</span>
                             </div>
-                            <div class="time-stat" id="recursiveTime">Waktu: - ms</div>
+
+                            <button onclick="runIterative()"
+                                class="w-full py-2 bg-slate-800 hover:bg-accentBlue hover:text-bgDark text-slate-300 rounded-lg border border-slate-700 transition-all font-medium text-sm mb-4">
+                                Jalankan Proses
+                            </button>
+
+                            <div class="flex-grow space-y-4">
+                                <div class="bg-bgDark p-3 rounded-lg border border-slate-800">
+                                    <div class="text-xs text-slate-500 mb-1">Hasil Biner:</div>
+                                    <div id="iterativeResult"
+                                        class="font-mono text-lg text-white break-all tracking-wider min-h-[28px]">-
+                                    </div>
+                                </div>
+
+                                <div class="bg-black p-4 rounded-lg border border-slate-800 font-mono text-xs h-48 overflow-y-auto custom-scroll"
+                                    id="iterativeSteps">
+                                    <span class="text-slate-600 italic">// Log proses akan muncul di sini...</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
+                                <span class="text-xs text-slate-500">Execution Time</span>
+                                <span id="iterativeTime" class="text-sm font-mono text-emerald-400">- ms</span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-slate-900/50 border border-slate-800 rounded-xl p-6 flex flex-col h-full hover:border-slate-600 transition-colors">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-accentPurple mb-1">Rekursif</h3>
+                                    <p class="text-xs text-slate-500 font-mono">Self-Calling Function (Stack)</p>
+                                </div>
+                                <span
+                                    class="bg-accentPurple/10 text-accentPurple text-xs px-2 py-1 rounded border border-accentPurple/20 font-mono">O(log
+                                    n)</span>
+                            </div>
+
+                            <button onclick="runRecursive()"
+                                class="w-full py-2 bg-slate-800 hover:bg-accentPurple hover:text-white text-slate-300 rounded-lg border border-slate-700 transition-all font-medium text-sm mb-4">
+                                Jalankan Proses
+                            </button>
+
+                            <div class="flex-grow space-y-4">
+                                <div class="bg-bgDark p-3 rounded-lg border border-slate-800">
+                                    <div class="text-xs text-slate-500 mb-1">Hasil Biner:</div>
+                                    <div id="recursiveResult"
+                                        class="font-mono text-lg text-white break-all tracking-wider min-h-[28px]">-
+                                    </div>
+                                </div>
+
+                                <div class="bg-black p-4 rounded-lg border border-slate-800 font-mono text-xs h-48 overflow-y-auto custom-scroll"
+                                    id="recursiveSteps">
+                                    <span class="text-slate-600 italic">// Stack trace akan muncul di sini...</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
+                                <span class="text-xs text-slate-500">Execution Time</span>
+                                <span id="recursiveTime" class="text-sm font-mono text-emerald-400">- ms</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="benchmark" class="container">
-                <h2 class="section-title">Benchmark Performance</h2>
-                <p class="section-desc">Pengujian batch pada dataset: [10, 50, 100, 500, 1000, 5000, 10000]</p>
+        <section id="logic" class="py-16 bg-bgCard/30 border-y border-slate-800">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-12 text-center">Bedah <span class="text-accentCyan">Logika</span></h2>
 
-                <button onclick="runBenchmark()" class="btn btn-accent btn-wide">Mulai Benchmark Full </button>
-
-                <div class="benchmark-layout">
-                    <div class="chart-container">
-                        <canvas id="performanceChart"></canvas>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-bgCard p-6 rounded-xl border-l-4 border-accentPurple shadow-lg">
+                        <h3 class="text-lg font-bold mb-2">1. Modulo ( % )</h3>
+                        <p class="text-sm text-slate-400 mb-4">Operasi sisa bagi menentukan apakah suatu bilangan ganjil
+                            (1) atau genap (0).</p>
+                        <code
+                            class="block bg-black/50 p-3 rounded text-accentCyan font-mono text-sm border border-slate-700">
+                        19 % 2 = 1 (Bit akhir)
+                    </code>
                     </div>
-                    <div class="table-container">
-                        <table id="benchmarkTable">
+
+                    <div class="bg-bgCard p-6 rounded-xl border-l-4 border-accentBlue shadow-lg">
+                        <h3 class="text-lg font-bold mb-2">2. Division ( / )</h3>
+                        <p class="text-sm text-slate-400 mb-4">Membagi bilangan dengan 2 (Integer Division) sama dengan
+                            menggeser bit ke kanan (Right Shift).</p>
+                        <code
+                            class="block bg-black/50 p-3 rounded text-accentBlue font-mono text-sm border border-slate-700">
+                        Math.floor(19 / 2) = 9
+                    </code>
+                    </div>
+
+                    <div class="bg-bgCard p-6 rounded-xl border-l-4 border-emerald-500 shadow-lg">
+                        <h3 class="text-lg font-bold mb-2">3. Konkatenasi</h3>
+                        <p class="text-sm text-slate-400 mb-4">Pada metode iteratif, urutan penggabungan string harus
+                            dibalik karena kita mendapatkan LSB lebih dulu.</p>
+                        <code
+                            class="block bg-black/50 p-3 rounded text-emerald-400 font-mono text-sm border border-slate-700">
+                        biner = sisa + biner
+                    </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="benchmark" class="py-24 container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8">
+                <div class="mb-6 md:mb-0">
+                    <h2 class="text-3xl font-bold mb-2">Benchmark Performance</h2>
+                    <p class="text-slate-400">Pengujian batch pada dataset: [10, 50, ..., 10000]</p>
+                </div>
+                <button onclick="runBenchmark()" class="btn-primary w-full md:w-auto">
+                    Mulai Benchmark
+                </button>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="bg-bgCard border border-slate-800 rounded-xl p-6 shadow-xl">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+
+                <div class="bg-bgCard border border-slate-800 rounded-xl p-6 shadow-xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="benchmarkTable">
                             <thead>
-                                <tr>
-                                    <th>Input (N)</th>
-                                    <th>Iteratif (ms)</th>
-                                    <th>Rekursif (ms)</th>
+                                <tr class="text-slate-400 text-sm border-b border-slate-700">
+                                    <th class="p-3 font-medium">Input (N)</th>
+                                    <th class="p-3 font-medium">Iteratif (ms)</th>
+                                    <th class="p-3 font-medium">Rekursif (ms)</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Data populated by JS -->
+                            <tbody class="font-mono text-sm text-slate-300">
+                                <tr>
+                                    <td colspan="3" class="p-4 text-center text-slate-500 italic">Klik "Mulai Benchmark"
+                                        untuk melihat data</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="code" class="container">
-                <h2 class="section-title">Implementasi Code</h2>
-                <div class="code-tabs">
-                    <button class="tab-btn active" onclick="switchTab('java')">Java (Original)</button>
-                    <button class="tab-btn" onclick="switchTab('js')">JavaScript (Web)</button>
-                </div>
-
-                <div id="java-code" class="code-view active">
-                    <pre><code class="language-java">
-// Algoritma Iteratif
-public static String caraIteratif(int n) {
-    if (n == 0) return "0";
-    String biner = "";
-    while (n > 0) {
-        biner = (n % 2) + biner; 
-        n = n / 2;
-    }
-    return biner;
-}
-
-// Algoritma Rekursif
-public static String caraRekursif(int n) {
-    if (n == 0) return "";
-    return caraRekursif(n / 2) + (n % 2);
-}
-                </code></pre>
-                </div>
-
-                <div id="js-code" class="code-view">
-                    <pre><code class="language-javascript">
-// Algoritma Iteratif (JS)
-function caraIteratif(n) {
-    if (n === 0) return "0";
-    let biner = "";
-    while (n > 0) {
-        biner = (n % 2) + biner;
-        n = Math.floor(n / 2);
-    }
-    return biner;
-}
-
-// Algoritma Rekursif (JS)
-function caraRekursif(n) {
-    if (n === 0) return "";
-    return caraRekursif(Math.floor(n / 2)) + (n % 2);
-}
-                </code></pre>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Dibuat untuk Tugas Besar Analisis Kompleksitas Algoritma</p>
+        <footer class="py-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+            <p>Dibuat dengan Tailwind CSS & Vanilla JS untuk Tugas Besar AKA.</p>
         </footer>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
         <script src="script.js"></script>
     </body>
 

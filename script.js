@@ -1,14 +1,12 @@
+
 const dataset = [10, 50, 100, 500, 1000, 5000, 10000];
 let performanceChart = null;
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-// ==========================================
-// ALGORITHMS
-// ==========================================
 
 function caraIteratif(n) {
     if (n === 0) return "0";
     let biner = "";
-    // Note: In JS, numbers are floats. Use Math.floor for integer division.
     while (n > 0) {
         biner = (n % 2) + biner;
         n = Math.floor(n / 2);
@@ -16,133 +14,216 @@ function caraIteratif(n) {
     return biner;
 }
 
-function caraRekursif(n) {
-    if (n === 0) return "";
-    return caraRekursif(Math.floor(n / 2)) + (n % 2);
-}
-
-// Wrapper for recursive to handle 0 case at top level matching Java parity
 function runRecursiveAlgo(n) {
     if (n === 0) return "0";
-    return caraRekursif(n);
+
+    function recurse(num) {
+        if (num === 0) return "";
+        return recurse(Math.floor(num / 2)) + (num % 2);
+    }
+    return recurse(n);
 }
 
-// ==========================================
-// DEMO LOGIC
-// ==========================================
+async function runIterativeVisual(n) {
+    const logContainer = document.getElementById('iterativeSteps');
+    const resultBox = document.getElementById('iterativeResult');
+    logContainer.innerHTML = '';
+    resultBox.innerText = '...';
+
+    if (n === 0) {
+        resultBox.innerText = "0";
+        return;
+    }
+
+    let biner = "";
+    let current = n;
+    let step = 1;
+
+    while (current > 0) {
+        const sisa = current % 2;
+        const next = Math.floor(current / 2);
+
+        const div = document.createElement('div');
+        div.className = 'border-b border-slate-800 pb-1 mb-1 animate-pulse';
+        div.innerHTML = `<span class="text-accentBlue">Step ${step}:</span> ${current} / 2 = ${next} sisa <b class="text-accentCyan">${sisa}</b>`;
+
+        logContainer.appendChild(div);
+        logContainer.scrollTop = logContainer.scrollHeight;
+
+        biner = sisa + biner;
+        resultBox.innerText = biner;
+
+        current = next;
+        step++;
+
+        await sleep(600);
+        div.classList.remove('animate-pulse');
+    }
+
+    const doneDiv = document.createElement('div');
+    doneDiv.className = 'text-emerald-400 mt-2 font-bold';
+    doneDiv.innerText = `>> Selesai! Hasil: ${biner}`;
+    logContainer.appendChild(doneDiv);
+    logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+async function runRecursiveVisual(n, depth = 0) {
+    const logContainer = document.getElementById('recursiveSteps');
+
+    if (depth === 0) {
+        logContainer.innerHTML = '';
+        document.getElementById('recursiveResult').innerText = '...';
+    }
+
+    // --- FASE CALL (PUSH) ---
+    const indent = depth * 12; // Indentasi visual
+    let callDiv = document.createElement('div');
+    callDiv.className = 'mb-1 text-slate-300';
+    callDiv.style.paddingLeft = `${indent}px`;
+    callDiv.innerHTML = `→ Call: f(${n})`;
+    logContainer.appendChild(callDiv);
+    logContainer.scrollTop = logContainer.scrollHeight;
+
+    await sleep(400);
+
+    // Base Case
+    if (n === 0) {
+        let baseDiv = document.createElement('div');
+        baseDiv.className = 'mb-1 text-accentPurple font-bold';
+        baseDiv.style.paddingLeft = `${indent}px`;
+        baseDiv.innerText = `← Base Case: return ""`;
+        logContainer.appendChild(baseDiv);
+        return "";
+    }
+
+    // Rekursi
+    const hasilRekursi = await runRecursiveVisual(Math.floor(n / 2), depth + 1);
+    const sisa = n % 2;
+
+    // --- FASE RETURN (POP) ---
+    const result = hasilRekursi + sisa;
+
+    let returnDiv = document.createElement('div');
+    returnDiv.className = 'mb-1 text-emerald-400';
+    returnDiv.style.paddingLeft = `${indent}px`;
+    returnDiv.innerHTML = `← Return: "${hasilRekursi}" + ${sisa} = <b>"${result}"</b>`;
+    logContainer.appendChild(returnDiv);
+    logContainer.scrollTop = logContainer.scrollHeight;
+
+    await sleep(400);
+
+    if (depth === 0) {
+        document.getElementById('recursiveResult').innerText = result;
+        const doneDiv = document.createElement('div');
+        doneDiv.className = 'text-emerald-400 mt-2 font-bold border-t border-slate-700 pt-1';
+        doneDiv.innerText = `>> Stack Empty. Hasil Final: ${result}`;
+        logContainer.appendChild(doneDiv);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    return result;
+}
 
 function runIterative() {
     const input = document.getElementById('numberInput').value;
+    const isVisual = document.getElementById('visualMode').checked;
+
     if (input === "") return;
     const n = parseInt(input);
 
-    // Warmup
-    for (let i = 0; i < 100; i++) caraIteratif(n);
+    if (isVisual) {
+        runIterativeVisual(n);
+    } else {
+        const start = performance.now();
+        for (let i = 0; i < 1000; i++) caraIteratif(n);
+        const end = performance.now();
 
-    const start = performance.now();
-    for (let i = 0; i < 1000; i++) caraIteratif(n); // Run 1000x for visibility
-    const end = performance.now();
-    const avgTime = (end - start) / 1000;
-
-    const result = caraIteratif(n); // Get actual result
-    document.getElementById('iterativeResult').innerText = result;
-    document.getElementById('iterativeTime').innerText = `Rata-rata (1000x): ${avgTime.toFixed(6)} ms`;
+        document.getElementById('iterativeResult').innerText = caraIteratif(n);
+        document.getElementById('iterativeTime').innerText = `${((end - start)).toFixed(5)} ms`;
+        document.getElementById('iterativeSteps').innerHTML = '<div class="text-slate-500">Log visual dimatikan pada mode cepat.</div>';
+    }
 }
 
 function runRecursive() {
     const input = document.getElementById('numberInput').value;
+    const isVisual = document.getElementById('visualMode').checked;
+
     if (input === "") return;
     const n = parseInt(input);
 
-    // Warmup
-    for (let i = 0; i < 100; i++) runRecursiveAlgo(n);
+    if (isVisual) {
+        runRecursiveVisual(n);
+    } else {
+        const start = performance.now();
+        for (let i = 0; i < 1000; i++) runRecursiveAlgo(n);
+        const end = performance.now();
 
-    const start = performance.now();
-    for (let i = 0; i < 1000; i++) runRecursiveAlgo(n); // Run 1000x for visibility
-    const end = performance.now();
-    const avgTime = (end - start) / 1000;
-
-    const result = runRecursiveAlgo(n); // Get actual result
-    document.getElementById('recursiveResult').innerText = result;
-    document.getElementById('recursiveTime').innerText = `Rata-rata (1000x): ${avgTime.toFixed(6)} ms`;
+        document.getElementById('recursiveResult').innerText = runRecursiveAlgo(n);
+        document.getElementById('recursiveTime').innerText = `${((end - start)).toFixed(5)} ms`;
+        document.getElementById('recursiveSteps').innerHTML = '<div class="text-slate-500">Log visual dimatikan pada mode cepat.</div>';
+    }
 }
-
-// ==========================================
-// BENCHMARK LOGIC
-// ==========================================
 
 function runBenchmark() {
     const resultsIter = [];
     const resultsRecur = [];
     const tableBody = document.querySelector('#benchmarkTable tbody');
-    tableBody.innerHTML = ''; // Clear table
+    tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-accentCyan animate-pulse">Running Benchmark...</td></tr>';
 
-    // Scale iterations based on N to avoid browser hang on large N
-    // but ensured enough to capture time
-    const getIterations = (n) => {
-        if (n < 1000) return 50000;
-        if (n < 5000) return 10000;
-        return 2000;
-    };
-
-    // Use setTimeout to allow UI to update (non-blocking feel)
+    // Non-blocking loop simulation
     let index = 0;
+    const getIterations = (n) => n < 1000 ? 50000 : (n < 5000 ? 10000 : 2000);
 
     function processNext() {
         if (index >= dataset.length) {
             updateChart(resultsIter, resultsRecur);
+            updateTable(resultsIter, resultsRecur);
             return;
         }
 
         const n = dataset[index];
         const iterations = getIterations(n);
 
-        // --- Iterative ---
-        // Warmup
-        for (let i = 0; i < 100; i++) caraIteratif(n);
-
-        const startIter = performance.now();
+        // Iterative
+        const s1 = performance.now();
         for (let i = 0; i < iterations; i++) caraIteratif(n);
-        const endIter = performance.now();
-        const avgIter = (endIter - startIter) / iterations;
-        resultsIter.push(avgIter);
+        const e1 = performance.now();
+        resultsIter.push((e1 - s1) / iterations);
 
-        // --- Recursive ---
-        // Warmup
-        for (let i = 0; i < 100; i++) runRecursiveAlgo(n);
-
-        const startRecur = performance.now();
+        // Recursive
+        const s2 = performance.now();
         for (let i = 0; i < iterations; i++) runRecursiveAlgo(n);
-        const endRecur = performance.now();
-        const avgRecur = (endRecur - startRecur) / iterations;
-        resultsRecur.push(avgRecur);
-
-        // Update Table Row
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${n}</td>
-            <td>${avgIter.toFixed(6)}</td>
-            <td>${avgRecur.toFixed(6)}</td>
-        `;
-        tableBody.appendChild(row);
+        const e2 = performance.now();
+        resultsRecur.push((e2 - s2) / iterations);
 
         index++;
-        setTimeout(processNext, 10); // Schedule next batch
+        setTimeout(processNext, 10);
     }
-
     processNext();
 }
 
-// ==========================================
-// CHART VISUALIZATION
-// ==========================================
+function updateTable(iter, recur) {
+    const tbody = document.querySelector('#benchmarkTable tbody');
+    tbody.innerHTML = '';
+    dataset.forEach((n, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-800 hover:bg-slate-800/50 transition-colors';
+        tr.innerHTML = `
+                    <td class="p-3 text-slate-300">${n}</td>
+                    <td class="p-3 text-accentBlue">${iter[i].toFixed(6)}</td>
+                    <td class="p-3 text-accentPurple">${recur[i].toFixed(6)}</td>
+                `;
+        tbody.appendChild(tr);
+    });
+}
 
 function updateChart(iterData, recurData) {
     const ctx = document.getElementById('performanceChart').getContext('2d');
+    if (performanceChart) performanceChart.destroy();
 
-    if (performanceChart) {
-        performanceChart.destroy();
-    }
+    // Chart Global Defaults
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = '#334155';
 
     performanceChart = new Chart(ctx, {
         type: 'line',
@@ -152,16 +233,18 @@ function updateChart(iterData, recurData) {
                 {
                     label: 'Iteratif',
                     data: iterData,
-                    borderColor: '#4facfe', // Cyan/Blue
-                    backgroundColor: 'rgba(79, 172, 254, 0.2)',
+                    borderColor: '#4facfe',
+                    backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                    borderWidth: 2,
                     tension: 0.4,
                     fill: true
                 },
                 {
                     label: 'Rekursif',
                     data: recurData,
-                    borderColor: '#7b2ff7', // Purple
-                    backgroundColor: 'rgba(123, 47, 247, 0.2)',
+                    borderColor: '#7b2ff7',
+                    backgroundColor: 'rgba(123, 47, 247, 0.1)',
+                    borderWidth: 2,
                     tension: 0.4,
                     fill: true
                 }
@@ -170,62 +253,50 @@ function updateChart(iterData, recurData) {
         options: {
             responsive: true,
             plugins: {
-                title: {
-                    display: true,
-                    text: 'Kompleksitas Waktu (ms)',
-                    color: '#ffffff'
-                },
-                legend: {
-                    labels: { color: '#a0a0c0' }
-                }
+                legend: { position: 'top' },
+                title: { display: true, text: 'Kompleksitas Waktu (ms)', color: '#fff' }
             },
             scales: {
-                y: {
-                    grid: { color: '#2d3246' },
-                    ticks: { color: '#a0a0c0' }
-                },
-                x: {
-                    grid: { color: '#2d3246' },
-                    ticks: { color: '#a0a0c0' }
-                }
+                y: { grid: { color: '#1e293b' } },
+                x: { grid: { color: '#1e293b' } }
             }
         }
     });
 }
 
-// ==========================================
-// UI UTILS
-// ==========================================
-
-function switchTab(lang) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.code-view').forEach(view => view.classList.remove('active'));
-
-    // Simple index check or logic
-    if (lang === 'java') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('java-code').classList.add('active');
-    } else {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('js-code').classList.add('active');
-    }
-}
-
-// Initialize empty chart
+// Init Empty Chart
 window.onload = function () {
     const ctx = document.getElementById('performanceChart').getContext('2d');
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.borderColor = '#1e293b';
     performanceChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dataset.map(n => `N=${n}`),
-            datasets: [{ label: 'Data belum ada', data: [] }]
+            datasets: [{ label: 'Menunggu Data...', data: [] }]
         },
         options: {
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { grid: { color: '#2d3246' } },
-                x: { grid: { color: '#2d3246' } }
-            }
+            scales: { y: { grid: { color: '#1e293b' } }, x: { grid: { color: '#1e293b' } } }
         }
     });
 };
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    const links = document.querySelectorAll('.mobile-link');
+
+    if (btn && menu) {
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close menu when link clicked
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+    }
+});
