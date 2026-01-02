@@ -25,14 +25,20 @@ Saat ini tersedia dalam dua implementasi:
 ## Analisis Algoritma
 
 ### 1. Cara Iteratif
-Menggunakan loop `while` untuk membagi bilangan secara berulang.
-- **Kompleksitas Waktu**: $O(\log n)$
-- **Kelebihan**: Lebih hemat memori karena tidak menggunakan stack frame tambahan.
+Menggunakan loop `while` untuk membagi bilangan secara berulang hingga mencapai 0.
+
+- **Best Case**: $O(1)$ — Jika input $N = 0$, loop tidak dijalankan.
+- **Worst Case**: $O(\log n)$ — Harus membagi $N$ sampai habis. Jumlah operasi sebanding dengan jumlah bit ($\approx \log_2 N$).
+- **Average Case**: $O(\log n)$ — Secara rata-rata, setiap bilangan bulat positif $N$ memiliki panjang bit $\log_2 N$.
 
 ### 2. Cara Rekursif
-Menggunakan fungsi yang memanggil dirinya sendiri.
-- **Kompleksitas Waktu**: $O(\log n)$
-- **Kekurangan**: Membutuhkan memori tambahan untuk call stack (Overhead).
+Menggunakan fungsi yang memanggil dirinya sendiri (Divide and Conquer).
+
+- **Best Case**: $O(1)$ — Jika input $N = 0$, langsung return (Base Case).
+- **Worst Case**: $O(\log n)$ — Kedalaman stack (recursion depth) mencapai $\log_2 N$.
+- **Average Case**: $O(\log n)$ — Sama seperti iteratif, jumlah pemanggilan fungsi sebanding dengan jumlah bit.
+
+> **Kesimpulan**: Kedua algoritma memiliki efisiensi waktu yang setara secara asimtotik, namun Iteratif lebih hemat memori ($O(1)$ Space) dibandingkan Rekursif ($O(\log n)$ Stack Space).
 
 ## Cara Menjalankan
 

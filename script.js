@@ -1,5 +1,5 @@
 
-const dataset = [10, 50, 100, 500, 1000, 5000, 10000];
+const dataset = [0, 10, 50, 100, 500, 1000, 5000, 10000];
 let performanceChart = null;
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -209,9 +209,9 @@ function updateTable(iter, recur) {
         const tr = document.createElement('tr');
         tr.className = 'border-b border-slate-800 hover:bg-slate-800/50 transition-colors';
         tr.innerHTML = `
-                    <td class="p-3 text-slate-300">${n}</td>
-                    <td class="p-3 text-accentBlue">${iter[i].toFixed(6)}</td>
-                    <td class="p-3 text-accentPurple">${recur[i].toFixed(6)}</td>
+                    <td class="p-3 text-white font-bold">${n}</td>
+                    <td class="p-3 text-white">${iter[i].toFixed(6)}</td>
+                    <td class="p-3 text-gray-400">${recur[i].toFixed(6)}</td>
                 `;
         tbody.appendChild(tr);
     });
